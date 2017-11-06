@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.ml.dao.CarDao">
+	 <insert id="insertCar" 
+	          parameterType="com.ml.entity.Car">
+	    insert into shop_order
+		( shop_order_id,
+		shop_user_id,
+		shop_product_id,
+		shop_order_status,
+		shop_order_count)
+		values
+		(#{shop_order_id},#{shop_user_id},
+		#{shop_product_id},#{shop_order_status},
+		#{shop_order_count})
+	 </insert>
+	 <select id="seeCar" parameterType="String"
+	     resultType="com.ml.entity.Product">
+	  SELECT * FROM shop_product
+	   WHERE shop_product_id IN(SELECT shop_product_id 
+	   FROM shop_order s ,shop_user u 
+	   WHERE u.shop_user_id=#{userId});
+	 </select>
+	 
+	  <delete id="delProduct" parameterType="String">
+	    DELETE FROM shop_order
+	    WHERE shop_product_id=#{productId};
+	 </delete>
+	 
+	 <update id="updateStatus" parameterType="String">
+		update shop_order
+		set shop_order_status="2"
+		where shop_order_id=#{id}
+	</update>
+</mapper>
+
+

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <!-- <link rel="stylesheet" type="text/css" href="../public/css/base.css">  -->
+    <link rel="stylesheet" type="text/css" href="css/b_login.css">
+  	<script type="text/javascript" src="js/jquery-1.11.0.js"></script>
+  	<script type="text/javascript" src="js/basevalue.js"></script>
+  	<script type="text/javascript" src="js/cookie_util.js"></script>
+	<title>后台登录页面</title>
+	<style>
+	#btn{
+	    width: 246px;
+        border-radius: 12px 12px; 
+	}
+	</style>
+	<script type="text/javascript">
+	  $(function(){
+		  $("#btn").click(
+		    function(){
+		    //获取请求参数
+		    var name = $("#username").val().trim();
+		    var password =$("#password").val().trim();
+		    var ok = "true";
+			if(name==""){
+				   ok="false";
+			   }
+		    if(password==""){
+				   ok="false";
+			   }
+		    //发送ajax请求
+		    if(ok){
+		    	 $.ajax({
+				      url:path+"/admin/logined.do",
+				      type:"post",
+				      data:{"name":name,"password":password},
+				      dataType:"json",	  
+				      success:function(result){
+					    if(result.status==0){
+						   //将用户信息写入cookie						 
+						 var adminId = result.data.shop_admin_id;
+						 addCookie("adminId",adminId,2);
+						   window.location.href="ad_index.html";
+						 
+					    }else if(result.status==1){//用户名错误
+						   alert(result.msg);
+					    }else if(result.status==2){//密码错误
+						   alert(result.msg);
+					   }
+		             },
+		             error:function(){
+		            	 alert("登陆失败");
+		               }
+		             });
+		      }
+		   });
+
+  })
+	</script>
+</head>
+<body>
+<div class="login">
+	<div class="loginmain">
+		<h2>商城后台管理系统</h2>
+			<form action="#" class="form-horizontal">
+		           <!-- 让表单在一行中显示form-horizontal -->
+		          <div class="form-group">
+		              <label for="username" class="col-lg-1 control-label">用户名</label>
+		              <div class="col-lg-4">
+		                <input type="text" name="username" id="username" class="form-control" placeholder="admin">
+		              </div>              
+		          </div>
+				  <div class="form-group"></div>
+				  <div class="form-group"></div>
+
+		          <div class="form-group">
+		              <label for="password" class="col-lg-1 control-label">密&nbsp;&nbsp;&nbsp;&nbsp;码</label>
+		              <div class="col-lg-4">
+		                <input type="password" name="password" id="password" class="form-control" placeholder="admin">
+		              </div>              
+		          </div>
+                   <div class="form-group"></div>
+                   <!-- <div class="form-group"></div> -->
+
+		          <div class="form-group">
+		            <div class="col-lg-11 col-lg-offset-1">              
+		                <span class="checkbox ">
+		                    <label><input type="checkbox" name="" class="checkbox-inline">记住我</label> 
+		                </span>           
+		            </div>
+		          </div>
+
+		          <div class="form-group">
+		            <div class="col-lg-6 col-lg-offset-1" >
+		                <input type="button" name="button" id="btn" value="登录" class="btn btn-danger btn-lg">
+		                <span class="text"></span>              
+		            </div>
+
+		          </div>
+
+		    </form>
+	</div>
+	<div class="rightpic">
+		<div id="container">
+			<!-- <img src="picture/1.jpg" alt="" width="500px" height="330px"> -->
+		</div>
+	</div>
+</div>
+
+<script src="js/jquery-3.1.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/delaunay.js"></script>
+<script src="js/TweenMax.js"></script>
+<script src="js/effect.js"></script>
+
+<script src="js/b_login.js"></script>	
+</body>
+</html>

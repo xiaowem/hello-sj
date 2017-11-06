@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.ml.dao.AdminDao">
+
+	 <insert id="insertProduct" parameterType="com.ml.entity.Product">
+	 	insert into shop_product
+	 	(shop_product_id,shop_image_address,shop_product_name,shop_product_price,shop_product_count,shop_product_list) 
+	 	values
+	 	(#{shop_product_id},#{shop_image_address},#{shop_product_name},#{shop_product_price},#{shop_product_count},#{shop_product_list});
+	 </insert>
+     
+      <delete id="delPro" parameterType="String">
+	    DELETE FROM shop_product
+	    WHERE shop_product_id=#{productId};
+	 </delete>
+
+
+	 <select id="findAdminPass" parameterType="String"
+	     resultType="com.ml.entity.Admin">
+	     SELECT * FROM shop_admin
+	     where shop_admin_name=#{name}
+	 </select>
+	 <select id="seeAll" 
+	     resultType="com.ml.entity.User">
+	     SELECT * FROM shop_user
+     </select>
+     <delete id="delUser" parameterType="String">
+	    DELETE FROM shop_user
+	    WHERE shop_user_id=#{userId};
+	 </delete>
+	 <insert id="addP" parameterType="com.ml.entity.Product">
+	  insert into shop_product(shop_product_id,shop_product_name,
+     		shop_product_price,shop_product_count,shop_product_list,shop_image_address) 
+	  values(#{shop_product_id},#{shop_product_name},#{shop_product_price},#{shop_product_count},#{shop_product_list},#{shop_image_address})                
+	</insert>
+	<update id="upProduct" parameterType="com.ml.entity.Product">
+	    update shop_product
+ 	    set 
+ 	    shop_product_name =#{shop_product_name},
+ 	    shop_product_price=#{shop_product_price},
+ 	    shop_product_count=#{shop_product_count}
+ 	    where shop_product_id=#{shop_product_id}  
+	</update>
+	<update id="upUser" parameterType="com.ml.entity.User">
+	    update shop_user
+ 	    set 
+ 	    shop_user_name =#{shop_user_name},
+ 	    shop_user_password=#{shop_user_password},
+ 	    shop_user_email=#{shop_user_email}
+ 	    where shop_user_id=#{shop_user_id}  
+	</update>
+	
+</mapper>
+
+

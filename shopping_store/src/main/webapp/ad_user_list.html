@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1 , user-scalable=no">
+    <title>用户管理</title>
+    <link rel="stylesheet" href="css/bootstrap.min.new.css"/>
+    <link rel="stylesheet" href="css/bootstrap-maizi.css"/>
+    <script src="js/jquery-1.11.0.js"></script>
+    <script type="text/javascript" src="js/basevalue.js"></script>
+     <script src="js/admin.js"></script>
+     <script type="text/javascript" src="js/cookie_util.js"></script>
+     <script type="text/javascript" src="js/quit.js"></script>
+     <style>
+		.del,.revise1{
+	        background:#51636b;
+		    border-radius: 10px 10px;
+		    padding-right: 3px;
+		    text-align: center;
+		    cursor: pointer;
+		} 
+		.del:hover{
+		    background:#0f6f9a;
+		} 
+		.revise1:hover{
+		    background:#0f6f9a;
+		}    
+     </style>
+    <script type="text/javascript">
+    //查看所有用户
+    $(document).ready(seeAllUser); 
+    $(function(){
+    	//删除用户
+     	$("tbody").on("click","tr .del",delUser);
+	    //退出
+	    $("#out").click(out);
+	    //编辑用户
+	     $("tbody").on("click","tr .revise1",
+           function(){
+	    	 var $li= $(this).parent().parent();
+			 var userId = $li.data("userId");
+	    	 $("#addId1").val(userId);
+	    	 
+	    	 $(".xg").on("click","#send1",
+	    			 function(){
+	    			   //获取请求参数
+	    				   var  userId = $("#addId1").val().trim();
+	    					var  userName  = $("#addNa").val();
+	    					var  userPass  = $("#addPr").val();
+	    					var  userEm = $("#addNum").val();
+	    					//alert(userName);
+	    					$.ajax({
+	    			    		url:path+"/admin/updateUser.do",
+	    			    		type:"post",
+	    			    		data:{"userId":userId,"userName":userName,"userPass":userPass,"userEm":userEm},
+	    			    		dataType:"json",
+	    			    		success:function(result){
+	    							alert(result.msg);
+	    							window.location.href="ad_user_list.html";
+	    			    		},
+	    			    		error:function(){
+	    			    			alert("修改失败");
+	    			    			} 
+	    			     });
+	    	       });
+	     });
+    	//添加用户
+    	$(".modal-content").on("click","#send",function(){
+    		//1.判断用户名是否那个重复
+			$("#addname").blur(function(){
+			//获取姓名
+			var username = $("#addname").val().trim();
+			//alert(username);
+			var flag = true;
+			if(username == "") {
+				alert("名字不能为空");
+				flag = false;
+			}
+			//2.发送ajax请求
+			if(flag) {
+				$.ajax({
+				url:path+"/user/ckname.do",
+					type:"post",
+					data:{"username":username},
+					success:function(result){
+						if(result.status == 0) {//用户名可用
+							alert(result.msg);
+						}else if(result.status == 1) {//用户名已存在
+							alert(result.msg);
+						}else {//用户名不能为空
+							alert(result.msg);
+						}
+					},
+					error:function() {
+						alert("注册异常！");
+					}
+			});
+			}
+		});
+			$("#send").click(function(){
+				//alert("----");
+				//3.获取文本框的内容
+				var username = $("#addname").val().trim();
+				var email = $("#addemail").val().trim();
+				var password = $("#addpassword").val().trim();
+				var password1 = $("#addpassword1").val().trim();
+			//	alert(password);
+			//	alert(password1);
+				//4.判断
+				var flag = true;
+				if(username == "") {
+					alert("名字不能为空");
+					flag = false;
+				}
+
+				if(email == "") {
+					alert("email不能为空");
+					flag = false;
+				}
+
+				if(password == "") {
+					alert("密码不能为空");
+					flag = false;
+				}
+				if(password1 == "") {
+					alert("密码不能为空");
+					flag = false;
+				}else if(password !== password1) {
+					alert("密码不一致");
+					flag = false;
+				}
+				
+				//5.发送ajax请求
+				if(flag) {
+					$.ajax({
+						url:path+"/user/add.do",
+						type:"post",
+						data:{"username":username,"password":password,"email":email},
+						success:function(result){
+							if(result.status == 0) {//正确
+								alert("添加成功");
+								window.location.href="ad_user_list.html";
+							}
+						},
+						error:function() {
+							alert("注册异常！");
+						}
+						
+					});
+				}
+				
+			});	
+			
+			
+			
+    	 });
+    })
+    </script>
+</head>
+<body>
+<!--导航-->
+<nav class="navbar navbar-default">
+    <div class="container">
+        <!--小屏幕导航按钮F和logo-->
+        <div class="navbar-header">
+            <button class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
+        <!--小屏幕导航按钮和logo-->
+        <!--导航-->
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="ad_index.html"><span class="glyphicon glyphicon-home"></span>&nbsp;&nbsp;后台首页</a></li>
+                <li class="active"><a href="ad_user_list.html"><span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;用户管理</a></li>
+                <li><a href="upfile.jsp"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;&nbsp;商品管理</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    
+                    <ul class="dropdown-menu" aria-labelledby="dLabel">
+                        <li><a href="ad_index.html"><span class="glyphicon glyphicon-screenshot"></span>&nbsp;&nbsp;前台首页</a></li>
+                        <li><a href="ad_index.html"><span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;个人主页</a></li>
+                    </ul>
+                </li>
+                <li id="out"><a href="#bbs"><span class="glyphicon glyphicon-off"></span>&nbsp;&nbsp;退出</a></li>
+            </ul>
+        </div>
+        <!--导航-->
+
+    </div>
+</nav>
+<!--导航-->
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-2">
+            <div class="list-group">
+                <a href="ad_user_list.html" class="list-group-item active">用户管理</a>
+                <a href="" role="button"  class="list-group-item" data-toggle="modal" data-target="#myModal">添加用户</a>
+            </div>
+        </div>
+        <div class="col-md-10">
+            <div class="page-header">
+                <h1>用户管理</h1>
+            </div>
+            <ul class="nav nav-tabs">
+                <li class="active">
+                    <a href="user_list.html">用户列表</a>
+                </li>
+               
+            </ul>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>用户名</th>
+                        <th>密码</th>
+                        <th>邮箱</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        <!--拼接的内容-->
+                        
+                </tbody>
+            </table>
+            <nav class="pull-right">
+                <ul class="pagination">
+                    <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+                    <li class="active"><a href="#">1</a></li>
+                    <li><a href="#">2 </a></li>
+                    <li><a href="#">3 </a></li>
+                    <li><a href="#">4 </a></li>
+                    <li><a href="#">5 </a></li>
+                    <li><a href="#">6 </a></li>
+                    <li><a href="#"><span aria-hidden="true">&raquo;</span></a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">添加用户</h4>
+            </div>
+            <div class="modal-body">
+                <form action="#">
+                    <div class="form-group">
+                        <label for="addname">用户名</label>
+                        <input type="text" id="addname" class="form-control" placeholder="用户名">
+                    </div>
+                    <div class="form-group">
+                        <label for="addpassword">用户密码</label>
+                        <input type="text" id="addpassword" class="form-control" placeholder="请输入用户密码">
+                    </div>
+                    <div class="form-group">
+                        <label for="addpassword1">确认用户密码</label>
+                        <input type="text" id="addpassword1" class="form-control" placeholder="请确认输入用户密码">
+                    </div>
+                    <div class="form-group">
+                        <label for="addemail">请输入用户邮箱</label>
+                        <input type="email" id="addemail" class="form-control" placeholder="请输入用户邮箱">
+                    </div>
+                    
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="send">提交</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 用户信息编辑 -->
+<div class="modal fade" id="myModal0" tabindex="-2" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog xg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">编辑商品信息</h4>
+            </div>
+            <div class="modal-body1">
+                <form action="#">
+                    <div class="form-group">
+                        <label for="addId1">用户ID:</label>
+                        <input type="text" id="addId1" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="addNa">用户姓名：</label>
+                        <input type="text" id="addNa" class="form-control" placeholder="用户名称">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="addPr">用户密码：</label>
+                        <input type="text" id="addPr" class="form-control" placeholder="用户密码">
+                    </div>
+                    <div class="form-group">
+                        <label for="addNum">用户邮箱：</label>
+                        <input type="email" id="addNum" class="form-control" placeholder="用户邮箱">
+                    </div>
+                    
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="send1">提交</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--footer-->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <p>
+                    Copyright&nbsp;©&nbsp;2012-2015&nbsp;&nbsp;www.maiziedu.com&nbsp;&nbsp;蜀ICP备13014270号-4
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+<script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+</body>
+</html>
